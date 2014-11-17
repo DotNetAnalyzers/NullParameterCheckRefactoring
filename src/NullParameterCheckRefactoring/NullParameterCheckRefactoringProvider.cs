@@ -117,8 +117,10 @@ namespace NullParameterCheckRefactoring
                     SyntaxFactory.Token(SyntaxKind.CloseParenToken), 
                     syntaxBlock, null).WithAdditionalAnnotations(Formatter.Annotation);
 
+            SyntaxList<SyntaxNode> newStatements = methodDeclaration.Body.Statements.Insert(0, nullCheckIfStatement);
+            BlockSyntax newBlock = SyntaxFactory.Block(newStatements).WithAdditionalAnnotations(Formatter.Annotation);
             SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken);
-            SyntaxNode newRoot = root.InsertNodesBefore(methodDeclaration.Body.ChildNodes().First(), new SyntaxNode[] { nullCheckIfStatement });
+            SyntaxNode newRoot = root.ReplaceNode(methodDeclaration.Body, newBlock);
 
             return document.WithSyntaxRoot(newRoot);
         }
