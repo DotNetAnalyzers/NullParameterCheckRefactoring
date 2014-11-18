@@ -17,5 +17,6 @@
   </Dependencies>
   <Assets>
     <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="NullParameterCheckRefactoring.CSharp" Path="|NullParameterCheckRefactoring.CSharp|"/>
+    <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="NullParameterCheckRefactoring.VB" Path="|NullParameterCheckRefactoring.VB|"/>
   </Assets>
 </PackageManifest>

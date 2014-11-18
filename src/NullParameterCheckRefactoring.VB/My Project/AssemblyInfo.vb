@@ -7,10 +7,10 @@ Imports System.Runtime.InteropServices
 
 ' Review the values of the assembly attributes
 
-<Assembly: AssemblyTitle("NullParameterCheckRefactoring")>
+<Assembly: AssemblyTitle("NullParameterCheckRefactoring.VB")>
 <Assembly: AssemblyDescription("")>
 <Assembly: AssemblyCompany("")>
-<Assembly: AssemblyProduct("NullParameterCheckRefactoring")>
+<Assembly: AssemblyProduct("NullParameterCheckRefactoring.VB")>
 <Assembly: AssemblyCopyright("Copyright ©  2014")>
 <Assembly: AssemblyTrademark("")>
 
