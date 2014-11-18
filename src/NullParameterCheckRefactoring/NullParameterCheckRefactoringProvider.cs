@@ -101,7 +101,7 @@ namespace NullParameterCheckRefactoring
             {
                 parameterNameExpression = SyntaxFactory.NameOfExpression(
                     "nameof",
-                    SyntaxFactory.ParseTypeName(parameter.Identifier.Text));
+                    SyntaxFactory.ParseExpression(parameter.Identifier.Text));
             }
             else
             {
