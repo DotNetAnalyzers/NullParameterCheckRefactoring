@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.CodeRefactorings;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
+using Microsoft.CodeAnalysis.Simplification;
 using System;
 using System.Collections.Generic;
 using System.Composition;
@@ -28,6 +29,12 @@ namespace NullParameterCheckRefactoring
             {
                 TypeSyntax paramTypeName = parameterSyntax.Type;
                 SemanticModel semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken);
+
+                // make sure ArgumentNullException is available
+                INamedTypeSymbol argumentNullExceptionSymbol = semanticModel.Compilation.GetTypeByMetadataName(typeof(ArgumentNullException).FullName);
+                if (argumentNullExceptionSymbol == null)
+                    return;
+
                 ITypeSymbol type = semanticModel.GetTypeInfo(paramTypeName).ConvertedType;
 
                 BaseMethodDeclarationSyntax methodDeclaration = parameterSyntax.Parent.Parent as BaseMethodDeclarationSyntax;
@@ -111,7 +118,7 @@ namespace NullParameterCheckRefactoring
             }
 
             ObjectCreationExpressionSyntax objectCreationExpression = SyntaxFactory.ObjectCreationExpression(
-                SyntaxFactory.ParseTypeName(nameof(ArgumentNullException)),
+                SyntaxFactory.ParseTypeName("global::" + typeof(ArgumentNullException).FullName),
                 SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(new[] { SyntaxFactory.Argument(parameterNameExpression) })),
                 null);
 
@@ -125,7 +132,7 @@ namespace NullParameterCheckRefactoring
                     SyntaxFactory.Token(SyntaxKind.OpenParenToken),
                     binaryExpression, 
                     SyntaxFactory.Token(SyntaxKind.CloseParenToken), 
-                    syntaxBlock, null).WithAdditionalAnnotations(Formatter.Annotation);
+                    syntaxBlock, null).WithAdditionalAnnotations(Formatter.Annotation, Simplifier.Annotation);
 
             SyntaxList<SyntaxNode> newStatements = methodDeclaration.Body.Statements.Insert(0, nullCheckIfStatement);
             BlockSyntax newBlock = SyntaxFactory.Block(newStatements).WithAdditionalAnnotations(Formatter.Annotation);
