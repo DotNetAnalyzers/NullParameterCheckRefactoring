@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.CodeRefactorings;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
+using Microsoft.CodeAnalysis.Simplification;
 using System;
 using System.Collections.Generic;
 using System.Composition;
@@ -101,9 +102,9 @@ namespace NullParameterCheckRefactoring
                 SyntaxFactory.ParseTypeName(parameter.Identifier.Text));
 
             ObjectCreationExpressionSyntax objectCreationExpression = SyntaxFactory.ObjectCreationExpression(
-                SyntaxFactory.ParseTypeName(nameof(ArgumentNullException)),
-                SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(new[] { SyntaxFactory.Argument(nameOfExpression) })),
-                null);
+                SyntaxFactory.ParseTypeName(typeof(ArgumentNullException).FullName),
+                SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(new[] { SyntaxFactory.Argument(nameOfExpression) })), 
+                null).WithAdditionalAnnotations(Simplifier.Annotation);
 
             BlockSyntax syntaxBlock = SyntaxFactory.Block(
                 SyntaxFactory.Token(SyntaxKind.OpenBraceToken),
