@@ -52,9 +52,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NullParameterCheckRefactoring\NullParameterCheckRefactoring.csproj">
+    <ProjectReference Include="..\NullParameterCheckRefactoring.CSharp\NullParameterCheckRefactoring.CSharp.csproj">
       <Project>{6FD2E415-46CD-4370-87BD-A5E2D03A5C0D}</Project>
-      <Name>NullParameterCheckRefactoring</Name>
+      <Name>NullParameterCheckRefactoring.CSharp</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

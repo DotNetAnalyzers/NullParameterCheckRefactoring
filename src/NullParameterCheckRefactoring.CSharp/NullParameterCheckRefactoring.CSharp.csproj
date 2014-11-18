@@ -11,7 +11,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NullParameterCheckRefactoring</RootNamespace>
-    <AssemblyName>NullParameterCheckRefactoring</AssemblyName>
+    <AssemblyName>NullParameterCheckRefactoring.CSharp</AssemblyName>
     <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
