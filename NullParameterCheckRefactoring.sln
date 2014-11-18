@@ -7,6 +7,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NullParameterCheckRefactori
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NullParameterCheckRefactoring.Vsix", "src\NullParameterCheckRefactoring.Vsix\NullParameterCheckRefactoring.Vsix.csproj", "{E9BE117A-4BF4-41C3-843A-CB659B433963}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CSharrp", "CSharrp", "{451619C9-8CBE-4A4C-9241-26D52D66154A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Visual Basic", "Visual Basic", "{8BC41A32-E898-428D-B63A-2643D76FCBEB}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "NullParameterCheckRefactoring_VB_", "NullParameterCheckRefactoring_VB_\NullParameterCheckRefactoring_VB_\NullParameterCheckRefactoring_VB_.vbproj", "{5C5C6CFE-22CB-4E7A-9916-B6F28785B5C0}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "NullParameterCheckRefactoring_VB_.Vsix", "NullParameterCheckRefactoring_VB_\NullParameterCheckRefactoring_VB_.Vsix\NullParameterCheckRefactoring_VB_.Vsix.vbproj", "{A9E55690-1ABC-4F6E-94E0-C5A47DAA24FF}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "NullParameterCheckRefactoring_CSVB", "NullParameterCheckRefactoring_CSVB\NullParameterCheckRefactoring_CSVB.vbproj", "{FBBD6579-0424-418E-9067-53A2740DF749}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,8 +31,26 @@ Global
 		{E9BE117A-4BF4-41C3-843A-CB659B433963}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9BE117A-4BF4-41C3-843A-CB659B433963}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9BE117A-4BF4-41C3-843A-CB659B433963}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C5C6CFE-22CB-4E7A-9916-B6F28785B5C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C5C6CFE-22CB-4E7A-9916-B6F28785B5C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C5C6CFE-22CB-4E7A-9916-B6F28785B5C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C5C6CFE-22CB-4E7A-9916-B6F28785B5C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9E55690-1ABC-4F6E-94E0-C5A47DAA24FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9E55690-1ABC-4F6E-94E0-C5A47DAA24FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9E55690-1ABC-4F6E-94E0-C5A47DAA24FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9E55690-1ABC-4F6E-94E0-C5A47DAA24FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBBD6579-0424-418E-9067-53A2740DF749}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBBD6579-0424-418E-9067-53A2740DF749}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBBD6579-0424-418E-9067-53A2740DF749}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBBD6579-0424-418E-9067-53A2740DF749}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6FD2E415-46CD-4370-87BD-A5E2D03A5C0D} = {451619C9-8CBE-4A4C-9241-26D52D66154A}
+		{E9BE117A-4BF4-41C3-843A-CB659B433963} = {451619C9-8CBE-4A4C-9241-26D52D66154A}
+		{5C5C6CFE-22CB-4E7A-9916-B6F28785B5C0} = {8BC41A32-E898-428D-B63A-2643D76FCBEB}
+		{A9E55690-1ABC-4F6E-94E0-C5A47DAA24FF} = {8BC41A32-E898-428D-B63A-2643D76FCBEB}
 	EndGlobalSection
 EndGlobal

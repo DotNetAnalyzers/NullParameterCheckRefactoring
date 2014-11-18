@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="NullParameterCheckRefactoring.Vsix..b066eabe-3d80-490a-a360-d7e42e57bc69" Version="1.0" Language="en-US" Publisher="Tugberk"/>
-    <DisplayName>NullParameterCheckRefactoring.Vsix</DisplayName>
+    <Identity Id="NullParameterCheckRefactoring_VB_.Vsix..6efc3a0c-3121-422d-afdb-479d49982476" Version="1.0" Language="en-US" Publisher="AdamSpeight"/>
+    <DisplayName>NullParameterCheckRefactoring_VB_.Vsix</DisplayName>
     <Description xml:space="preserve">Add Guard Statement for Reference Parameter Types. This code refactoring extension for the .NET Compiler Platform ("Roslyn").</Description>
     <MoreInfo>https://github.com/DotNetAnalyzers/NullParameterCheckRefactoring</MoreInfo>
   </Metadata>
@@ -16,6 +16,6 @@
     <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="4.5" />
   </Dependencies>
   <Assets>
-    <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="NullParameterCheckRefactoring" Path="|NullParameterCheckRefactoring|"/>
+    <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="NullParameterCheckRefactoring_VB_" Path="|NullParameterCheckRefactoring_VB_|"/>
   </Assets>
 </PackageManifest>
