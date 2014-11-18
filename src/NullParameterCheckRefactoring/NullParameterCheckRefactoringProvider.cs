@@ -33,7 +33,9 @@ namespace NullParameterCheckRefactoring
                 // make sure ArgumentNullException is available
                 INamedTypeSymbol argumentNullExceptionSymbol = semanticModel.Compilation.GetTypeByMetadataName(typeof(ArgumentNullException).FullName);
                 if (argumentNullExceptionSymbol == null)
+                {
                     return;
+                }
 
                 ITypeSymbol type = semanticModel.GetTypeInfo(paramTypeName).ConvertedType;
 
