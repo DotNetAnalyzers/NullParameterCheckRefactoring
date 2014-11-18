@@ -16,7 +16,7 @@ Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
     Dim _Model_ = Await context.Document.GetSemanticModelAsync(context.CancellationToken)
     Dim ifStatements = _method_.Statements.Where(Function(s) (TypeOf s Is MultiLineIfBlockSyntax) OrElse (TypeOf s Is SingleLineIfStatementSyntax))
     Dim pinfo = _Model_.GetTypeInfo(_parmeter_.AsClause.Type, context.CancellationToken)
-    If pinfo.ConvertedType.IsReferenceType = False Then Return  'Continue For
+    If pinfo.ConvertedType.IsReferenceType = False Then Return 
     Dim IsNullCheckAlreadyPresent = ifStatements.Any(NullChecks(_parmeter_))
     If Not IsNullCheckAlreadyPresent Then context.RegisterRefactoring(CodeAction.Create("Check Parameter for null", Function(ct As CancellationToken) AddParameterNullCheckAsync(context.Document, _parmeter_, _method_, ct)))
   End Function
@@ -70,14 +70,10 @@ Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
                 _IsExpr_,
                 SyntaxFactory.Token(SyntaxKind.ThenKeyword),
                 New SyntaxList(Of StatementSyntax)().Add(throwExpr),
-                Nothing)
+                Nothing).WithAdditionalAnnotations(Formatting.Formatter.Annotation)
 
     Dim newStatements = method.Statements.Insert(0, if_)
-    Dim newBlock = SyntaxFactory.MethodBlock(method.VBKind,
-                                             CType(method.Begin, MethodStatementSyntax),
-                                             newStatements,
-                                             method.End).
-                                             WithAdditionalAnnotations(Formatting.Formatter.Annotation)
+    Dim newBlock = method.WithStatements(newStatements)
     Return document.WithSyntaxRoot((Await document.GetSyntaxRootAsync(cancellationToken)).ReplaceNode(method, newBlock))
   End Function
 End Class
