@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.22310.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NullParameterCheckRefactoring.CSharp", "src\NullParameterCheckRefactoring.CSharp\NullParameterCheckRefactoring.CSharp.csproj", "{6FD2E415-46CD-4370-87BD-A5E2D03A5C0D}"
 EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "NullParameterCheckRefactoring.VB", "src\NullParameterCheckRefactoring.VB\NullParameterCheckRefactoring.VB.vbproj", "{5C5C6CFE-22CB-4E7A-9916-B6F28785B5C0}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NullParameterCheckRefactoring.Vsix", "src\NullParameterCheckRefactoring.Vsix\NullParameterCheckRefactoring.Vsix.csproj", "{E9BE117A-4BF4-41C3-843A-CB659B433963}"
 EndProject
 Global
@@ -17,6 +19,10 @@ Global
 		{6FD2E415-46CD-4370-87BD-A5E2D03A5C0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FD2E415-46CD-4370-87BD-A5E2D03A5C0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FD2E415-46CD-4370-87BD-A5E2D03A5C0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C5C6CFE-22CB-4E7A-9916-B6F28785B5C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C5C6CFE-22CB-4E7A-9916-B6F28785B5C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C5C6CFE-22CB-4E7A-9916-B6F28785B5C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C5C6CFE-22CB-4E7A-9916-B6F28785B5C0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E9BE117A-4BF4-41C3-843A-CB659B433963}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E9BE117A-4BF4-41C3-843A-CB659B433963}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9BE117A-4BF4-41C3-843A-CB659B433963}.Release|Any CPU.ActiveCfg = Release|Any CPU
