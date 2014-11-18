@@ -96,13 +96,23 @@ namespace NullParameterCheckRefactoring
                 SyntaxFactory.IdentifierName(parameter.Identifier),
                 SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression));
 
-            NameOfExpressionSyntax nameOfExpression = SyntaxFactory.NameOfExpression(
-                "nameof",
-                SyntaxFactory.ParseTypeName(parameter.Identifier.Text));
+            ExpressionSyntax parameterNameExpression;
+            if((document.Project.ParseOptions as CSharpParseOptions)?.LanguageVersion >= LanguageVersion.CSharp6)
+            {
+                parameterNameExpression = SyntaxFactory.NameOfExpression(
+                    "nameof",
+                    SyntaxFactory.ParseTypeName(parameter.Identifier.Text));
+            }
+            else
+            {
+                parameterNameExpression = SyntaxFactory.LiteralExpression(
+                    SyntaxKind.StringLiteralExpression,
+                    SyntaxFactory.Literal(parameter.Identifier.Text));
+            }
 
             ObjectCreationExpressionSyntax objectCreationExpression = SyntaxFactory.ObjectCreationExpression(
                 SyntaxFactory.ParseTypeName(nameof(ArgumentNullException)),
-                SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(new[] { SyntaxFactory.Argument(nameOfExpression) })),
+                SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(new[] { SyntaxFactory.Argument(parameterNameExpression) })),
                 null);
 
             BlockSyntax syntaxBlock = SyntaxFactory.Block(
