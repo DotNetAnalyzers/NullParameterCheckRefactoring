@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NullParameterCheckRefactori
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NullParameterCheckRefactoring.Vsix", "src\NullParameterCheckRefactoring.Vsix\NullParameterCheckRefactoring.Vsix.csproj", "{E9BE117A-4BF4-41C3-843A-CB659B433963}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CSharrp", "CSharrp", "{451619C9-8CBE-4A4C-9241-26D52D66154A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CSharp", "CSharp", "{451619C9-8CBE-4A4C-9241-26D52D66154A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Visual Basic", "Visual Basic", "{8BC41A32-E898-428D-B63A-2643D76FCBEB}"
 EndProject
