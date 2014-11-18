@@ -92,6 +92,31 @@ namespace NullParameterCheckRefactoring
 
         private async Task<Document> AddParameterNullCheckAsync(Document document, ParameterSyntax parameter, BaseMethodDeclarationSyntax methodDeclaration, CancellationToken cancellationToken)
         {
+            SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken);
+            IEnumerable<UsingDirectiveSyntax> usingDirectives = root.DescendantNodes().OfType<UsingDirectiveSyntax>();
+            bool isSystemUsingAvailable = usingDirectives.Any(usingDirective =>
+            {
+                bool result;
+                IdentifierNameSyntax usingIdentifierName = usingDirective.ChildNodes().OfType<IdentifierNameSyntax>().FirstOrDefault();
+                if(usingIdentifierName != null)
+                {
+                    if(usingIdentifierName.Identifier.Text.Equals("System", StringComparison.Ordinal))
+                    {
+                        result = true;
+                    }
+                    else
+                    {
+                        result = false;
+                    }
+                }
+                else
+                {
+                    result = false;
+                }
+
+                return result;
+            });
+
             BinaryExpressionSyntax binaryExpression = SyntaxFactory.BinaryExpression(
                 SyntaxKind.EqualsExpression,
                 SyntaxFactory.IdentifierName(parameter.Identifier),
@@ -102,7 +127,7 @@ namespace NullParameterCheckRefactoring
                 SyntaxFactory.ParseTypeName(parameter.Identifier.Text));
 
             ObjectCreationExpressionSyntax objectCreationExpression = SyntaxFactory.ObjectCreationExpression(
-                SyntaxFactory.ParseTypeName(typeof(ArgumentNullException).FullName),
+                SyntaxFactory.ParseTypeName((isSystemUsingAvailable) ? nameof(ArgumentNullException) : typeof(ArgumentNullException).FullName),
                 SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(new[] { SyntaxFactory.Argument(nameOfExpression) })), 
                 null).WithAdditionalAnnotations(Simplifier.Annotation);
 
@@ -120,7 +145,6 @@ namespace NullParameterCheckRefactoring
 
             SyntaxList<SyntaxNode> newStatements = methodDeclaration.Body.Statements.Insert(0, nullCheckIfStatement);
             BlockSyntax newBlock = SyntaxFactory.Block(newStatements).WithAdditionalAnnotations(Formatter.Annotation);
-            SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken);
             SyntaxNode newRoot = root.ReplaceNode(methodDeclaration.Body, newBlock);
 
             return document.WithSyntaxRoot(newRoot);
