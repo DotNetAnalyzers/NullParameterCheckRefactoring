@@ -127,7 +127,7 @@ namespace NullParameterCheckRefactoring
             BlockSyntax syntaxBlock = SyntaxFactory.Block(
                 SyntaxFactory.Token(SyntaxKind.OpenBraceToken),
                 new SyntaxList<StatementSyntax>().Add(SyntaxFactory.ThrowStatement(objectCreationExpression)),
-                SyntaxFactory.Token(SyntaxKind.CloseBraceToken)).WithAdditionalAnnotations(Formatter.Annotation);
+                SyntaxFactory.Token(SyntaxKind.CloseBraceToken));
 
             IfStatementSyntax nullCheckIfStatement = SyntaxFactory.IfStatement(
                     SyntaxFactory.Token(SyntaxKind.IfKeyword),
@@ -137,7 +137,7 @@ namespace NullParameterCheckRefactoring
                     syntaxBlock, null).WithAdditionalAnnotations(Formatter.Annotation, Simplifier.Annotation);
 
             SyntaxList<SyntaxNode> newStatements = methodDeclaration.Body.Statements.Insert(0, nullCheckIfStatement);
-            BlockSyntax newBlock = SyntaxFactory.Block(newStatements).WithAdditionalAnnotations(Formatter.Annotation);
+            BlockSyntax newBlock = methodDeclaration.Body.WithStatements(newStatements);
             SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken);
             SyntaxNode newRoot = root.ReplaceNode(methodDeclaration.Body, newBlock);
 
