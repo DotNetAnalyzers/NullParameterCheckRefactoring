@@ -54,19 +54,14 @@ Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
     ' Note: If I can find the nameof feature in VB.net, then I'll change this line to reflect that
     Dim _paramname_ = SyntaxFactory.StringLiteralExpression(
                         SyntaxFactory.Literal(parameterStmt.Identifier.Identifier.Text))
-    Dim st = SyntaxFactory.ObjectCreationExpression(Nothing,
-                              SyntaxFactory.ParseTypeName(GetType(ArgumentNullException).FullName),
-                              SyntaxFactory.ArgumentList().AddArguments(
-                                SyntaxFactory.SimpleArgument(_paramname_)
-                              ),
-                              Nothing)
+    Dim st = SyntaxFactory.ObjectCreationExpression(
+               SyntaxFactory.ParseTypeName(GetType(ArgumentNullException).FullName)).WithArgumentList(
+                 SyntaxFactory.ArgumentList().AddArguments(SyntaxFactory.SimpleArgument(_paramname_)))
 
     Dim throwExpr = SyntaxFactory.ThrowStatement(st)
 
     Dim if_ = SyntaxFactory.SingleLineIfStatement(
-                SyntaxFactory.Token(SyntaxKind.IfKeyword),
                 _IsExpr_,
-                SyntaxFactory.Token(SyntaxKind.ThenKeyword),
                 New SyntaxList(Of StatementSyntax)().Add(throwExpr),
                 Nothing).WithAdditionalAnnotations(Formatting.Formatter.Annotation)
 
