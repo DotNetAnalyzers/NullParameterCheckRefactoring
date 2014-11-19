@@ -48,10 +48,9 @@ Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
                                                     parameterStmt As ParameterSyntax,
                                                     method As MethodBlockSyntax,
                                                     cancellationToken As CancellationToken) As Task(Of Document)
-    Dim _null_ = SyntaxFactory.NothingLiteralExpression(SyntaxFactory.Token(SyntaxKind.NothingKeyword))
     Dim _IsExpr_ = SyntaxFactory.IsExpression(
                      SyntaxFactory.IdentifierName(parameterStmt.Identifier.Identifier.Text),
-                     _null_).WithAdditionalAnnotations(Formatting.Formatter.Annotation)
+                     SyntaxFactory.NothingLiteralExpression(SyntaxFactory.Token(SyntaxKind.NothingKeyword)))
     ' Note: If I can find the nameof feature in VB.net, then I'll change this line to reflect that
     Dim _paramname_ = SyntaxFactory.StringLiteralExpression(
                         SyntaxFactory.Literal(parameterStmt.Identifier.Identifier.Text))
