@@ -54,8 +54,7 @@ Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
                      _null_).WithAdditionalAnnotations(Formatting.Formatter.Annotation)
     ' Note: If I can find the nameof feature in VB.net, then I'll change this line to reflect that
     Dim _paramname_ = SyntaxFactory.StringLiteralExpression(
-                        SyntaxFactory.StringLiteralToken("""" & parameterStmt.Identifier.Identifier.Text & """",
-                                                         parameterStmt.Identifier.Identifier.Text))
+                        SyntaxFactory.Literal(parameterStmt.Identifier.Identifier.Text))
     Dim st = SyntaxFactory.ObjectCreationExpression(Nothing,
                               SyntaxFactory.ParseTypeName(GetType(ArgumentNullException).FullName),
                               SyntaxFactory.ArgumentList().AddArguments(
