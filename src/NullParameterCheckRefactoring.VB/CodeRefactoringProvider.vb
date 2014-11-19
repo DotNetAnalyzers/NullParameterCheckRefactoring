@@ -63,7 +63,7 @@ Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
     Dim if_ = SyntaxFactory.SingleLineIfStatement(
                 _IsExpr_,
                 New SyntaxList(Of StatementSyntax)().Add(throwExpr),
-                Nothing).WithAdditionalAnnotations(Formatting.Formatter.Annotation)
+                Nothing).WithAdditionalAnnotations(Formatting.Formatter.Annotation, Simplification.Simplifier.Annotation)
 
     Dim newStatements = method.Statements.Insert(0, if_)
     Dim newBlock = method.WithStatements(newStatements)
