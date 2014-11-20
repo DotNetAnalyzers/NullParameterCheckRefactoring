@@ -118,15 +118,13 @@ Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
       If index.HasValue Then  Guards(index.Value ) = eg.WithTrailingTrivia( SyntaxTrivia(SyntaxKind.EndOfLineTrivia,""))
     Next
     Dim i0 = FindGuardIndex( parameterNames,  _parmeter_.Identifier )
-    If i0.HasValue Then Guards(i0.Value ) = if_
-    Dim newmethod = method.RemoveNodes(ExistingGuards, SyntaxRemoveOptions.KeepTrailingTrivia Or
-                                                SyntaxRemoveOptions.KeepLeadingTrivia Or SyntaxRemoveOptions.KeepEndOfLine)
-  '  Dim index = FindGuardIndex(  )
+    If i0.HasValue Then Guards(i0.Value ) = if_.WithTrailingTrivia(SyntaxTrivia(SyntaxKind.EndOfLineTrivia, ""))
+    Dim newmethod = method.RemoveNodes(ExistingGuards, SyntaxRemoveOptions.KeepNoTrivia)
 
     Dim q=WhereNonNull( Guards).ToList
-Dim newStatements = newmethod.Statements.InsertRange(0,q)
-    Dim newBlock = newmethod.WithStatements(newStatements).WithAdditionalAnnotations(Formatting.Formatter.Annotation)
-    ' Return document.WithSyntaxRoot (Await newBlock.SyntaxTree.GetRootAsync(cancellationToken))
+    Dim newStatements = newmethod.Statements.InsertRange(0,q)
+    newmethod = newmethod.WithStatements(newStatements)
+    Dim newBlock = newmethod.WithAdditionalAnnotations(Formatting.Formatter.Annotation)
     Return document.WithSyntaxRoot((Await document.GetSyntaxRootAsync(cancellationToken)).ReplaceNode(method, newBlock))
   End Function
 
@@ -157,9 +155,9 @@ Dim newStatements = newmethod.Statements.InsertRange(0,q)
   Private Shared Function GetThrowStatementForParameter(parameterStmt As ParameterSyntax) As ThrowStatementSyntax 
     Dim _paramname_ = GetParameterName(parameterStmt)
     Dim st = ObjectCreationExpression(
-               ParseTypeName( GetType(ArgumentNullException).FullName )
-             ).WithArgumentList( ArgumentList().AddArguments( SimpleArgument(_paramname_))).WithTrailingTrivia(SyntaxTrivia(SyntaxKind.EndOfLineTrivia,""))
-    Return  ThrowStatement(st)
+               ParseTypeName(GetType(ArgumentNullException).FullName)
+             ).WithArgumentList(ArgumentList().AddArguments(SimpleArgument(_paramname_)))
+    Return ThrowStatement(st)
   End Function
 
   Private Shared Function GetIsNothingExpr (forParameter As ParameterSyntax) As BinaryExpressionSyntax
