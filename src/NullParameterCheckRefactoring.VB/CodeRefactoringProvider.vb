@@ -18,7 +18,7 @@ Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
     Dim pinfo = _Model_.GetTypeInfo(_parmeter_.AsClause.Type, context.CancellationToken)
     If pinfo.ConvertedType.IsReferenceType = False Then Return 
     Dim IsNullCheckAlreadyPresent = ifStatements.Any(NullChecks(_parmeter_))
-    If Not IsNullCheckAlreadyPresent Then context.RegisterRefactoring(CodeAction.Create("Check Parameter for null", Function(ct As CancellationToken) AddParameterNullCheckAsync(context.Document, _parmeter_, _method_, ct)))
+    If Not IsNullCheckAlreadyPresent Then context.RegisterRefactoring(CodeAction.Create("Check parameter for null", Function(ct As CancellationToken) AddParameterNullCheckAsync(context.Document, _parmeter_, _method_, ct)))
   End Function
 
   Private Shared Function NullChecks(_parmeter_ As ParameterSyntax) As Func(Of StatementSyntax, Boolean)
