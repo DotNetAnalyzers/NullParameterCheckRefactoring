@@ -116,7 +116,7 @@ namespace NullParameterCheckRefactoring
             {
                 parameterNameExpression = SyntaxFactory.LiteralExpression(
                     SyntaxKind.StringLiteralExpression,
-                    SyntaxFactory.Literal(parameter.Identifier.Text));
+                    SyntaxFactory.Literal(parameter.Identifier.ValueText));
             }
 
             ObjectCreationExpressionSyntax objectCreationExpression = SyntaxFactory.ObjectCreationExpression(
