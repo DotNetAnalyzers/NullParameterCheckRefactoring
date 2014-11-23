@@ -73,21 +73,21 @@ Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
                                                     method As MethodBlockSyntax,
                                                     cancellationToken As CancellationToken) As Task(Of Document)
 
-    Dim if_ As SingleLineIfStatementSyntax = GetSingleIFstatement(_parmeter_)
+    Dim NewGuard As SingleLineIfStatementSyntax = GetSingleIFstatement(_parmeter_)
     Dim ifStatements = method.Statements.Where(Function(s) (TypeOf s Is MultiLineIfBlockSyntax) OrElse (TypeOf s Is SingleLineIfStatementSyntax))
 
     Dim ExistingGuards = ifStatements.Where(Function(s)
                                               If TypeOf s Is SingleLineIfStatementSyntax Then
                                                 Dim singleIF = DirectCast(s, SingleLineIfStatementSyntax)
                                                 Dim isExpr = TryCast(singleIF.Condition, BinaryExpressionSyntax)
-                                                Return  CheckIfCondition(isExpr)
+                                                Return CheckIfCondition(isExpr)
                                               ElseIf TypeOf s Is MultiLineIfBlockSyntax Then
                                                 Dim multiIF = DirectCast(s, MultiLineIfBlockSyntax)
                                                 Dim isExpr = TryCast(multiIF.IfStatement.Condition, BinaryExpressionSyntax)
                                                 Return CheckIfCondition(isExpr)
-                                                Else
+                                              Else
                                                 Return False
-                                                End If
+                                              End If
                                             End Function).ToList()
     Dim ExistingGuardParameters = ExistingGuards.Select(Function(s)
                                                           If TypeOf s Is SingleLineIfStatementSyntax Then
@@ -102,29 +102,32 @@ Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
                                                             Return Nothing
                                                           End If
                                                         End Function).ToList()
- 
+
 
     Dim parameters = method.Begin.ParameterList.Parameters
-    Dim pCount = parameters .Count
-    Dim Guards As New List(Of StatementSyntax)(Enumerable.Repeat(Of StatementSyntax)(Nothing,pCount))
-    Dim _Model_ = Await document.GetSemanticModelAsync(cancellationToken)
+    Dim pCount = parameters.Count
+     Dim _Model_ = Await document.GetSemanticModelAsync(cancellationToken)
+
+    Dim Guards As New List(Of StatementSyntax)(Enumerable.Repeat(Of StatementSyntax)(Nothing, pCount))
     Dim parameterNames = parameters.Select(Function(p) p.Identifier).ToList
-    For i = 0 To ExistingGuards.Count -1
-     Dim eg = ExistingGuards(i)
+
+    For i = 0 To ExistingGuards.Count - 1
+      Dim eg = ExistingGuards(i)
       Dim pinfo = _Model_.GetTypeInfo(_parmeter_.AsClause.Type, cancellationToken)
       If pinfo.ConvertedType.IsReferenceType = False Then Continue For
       Dim Id = ExistingGuardParameters(i)
       Dim index = FindGuardIndex(parameterNames, Id)
-      If index.HasValue Then  Guards(index.Value ) = eg.WithTrailingTrivia( SyntaxTrivia(SyntaxKind.EndOfLineTrivia,""))
+      If index.HasValue Then Guards(index.Value) = eg.WithTrailingTrivia(SyntaxTrivia(SyntaxKind.EndOfLineTrivia, ""))
     Next
-    Dim i0 = FindGuardIndex( parameterNames,  _parmeter_.Identifier )
-    If i0.HasValue Then Guards(i0.Value ) = if_.WithTrailingTrivia(SyntaxTrivia(SyntaxKind.EndOfLineTrivia, ""))
-    Dim newmethod = method.RemoveNodes(ExistingGuards, SyntaxRemoveOptions.KeepNoTrivia)
 
-    Dim q=WhereNonNull( Guards).ToList
-    Dim newStatements = newmethod.Statements.InsertRange(0,q)
+    Dim NewGuardIndex = FindGuardIndex(parameterNames, _parmeter_.Identifier)
+    If NewGuardIndex.HasValue Then Guards(NewGuardIndex.Value) = NewGuard.WithTrailingTrivia(SyntaxTrivia(SyntaxKind.EndOfLineTrivia, ""))
+    Dim newmethod = method.RemoveNodes(ExistingGuards, SyntaxRemoveOptions.KeepExteriorTrivia Or SyntaxRemoveOptions.KeepEndOfLine)
+
+    Dim NonNullGuards = WhereNonNull(Guards).ToList
+    Dim newStatements = newmethod.Statements.InsertRange(0, NonNullGuards)
     newmethod = newmethod.WithStatements(newStatements)
-    Dim newBlock = newmethod.WithAdditionalAnnotations(Formatting.Formatter.Annotation)
+    Dim newBlock = newmethod '.NormalizeWhitespace.WithAdditionalAnnotations(Formatting.Formatter.Annotation)
     Return document.WithSyntaxRoot((Await document.GetSyntaxRootAsync(cancellationToken)).ReplaceNode(method, newBlock))
   End Function
 
@@ -134,12 +137,14 @@ Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
     Next j
     Return New Integer?()
   End Function
+
   Private Shared Function FindGuardIndex(ParametersNames As List(Of ModifiedIdentifierSyntax), Id As ModifiedIdentifierSyntax) As Integer?
     For j = 0 To ParametersNames.Count - 1
       If String.Compare(ParametersNames(j).Identifier.Text, Id.Identifier.Text, StringComparison.Ordinal) = 0 Then Return New Integer?(j)
     Next j
     Return New Integer?()
   End Function
+
   Private Function WhereNonNull(Of T As Class)(xs As IEnumerable(Of T)) As IEnumerable(Of T)
     Return xs.Where(Function(x) x IsNot Nothing)
   End Function
@@ -147,8 +152,8 @@ Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
   Private Shared Function GetSingleIFstatement(parameterStmt As ParameterSyntax) As SingleLineIfStatementSyntax
     Dim if_ = SingleLineIfStatement(
                 GetIsNothingExpr(parameterStmt),
-               New SyntaxList(Of StatementSyntax)().Add(GetThrowStatementForParameter(parameterStmt)),
-                Nothing).NormalizeWhitespace.WithAdditionalAnnotations(Formatting.Formatter.Annotation)
+               New SyntaxList(Of StatementSyntax)().Add(GetThrowStatementForParameter(parameterStmt).WithTrailingTrivia(EndOfLine("", True))),
+                Nothing).NormalizeWhitespace '.WithAdditionalAnnotations(Formatting.Formatter.Annotation)
     Return if_
   End Function
 
@@ -184,4 +189,5 @@ Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
     ' Note: If I can find the nameof feature in VB.net, then I'll change this line to reflect that
     Return StringLiteralExpression(Literal(parameterStmt.Identifier.Identifier.Text))
   End Function
+
 End Class
