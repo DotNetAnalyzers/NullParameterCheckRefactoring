@@ -52,7 +52,7 @@ namespace NullParameterCheckRefactoring
                             .Where(x => x.IsKind(SyntaxKind.EqualsExpression))
                             .Any(expression =>
                             {
-                                bool result;
+                                bool result = false;
                                 bool isNullCheck = expression.Right.IsKind(SyntaxKind.NullLiteralExpression);
                                 if (isNullCheck)
                                 {
@@ -67,21 +67,8 @@ namespace NullParameterCheckRefactoring
                                             // There is already a null check for this parameter. Skip it.
                                             result = true;
                                         }
-                                        else
-                                        {
-                                            result = false;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        result = false;
                                     }
                                 }
-                                else
-                                {
-                                    result = false;
-                                }
-
                                 return result;
                             });
                     });
