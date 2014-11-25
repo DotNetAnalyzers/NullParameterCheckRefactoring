@@ -47,6 +47,7 @@
     <StartArguments>/rootsuffix Roslyn</StartArguments>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
@@ -60,6 +61,14 @@
       <Project>{5c5c6cfe-22cb-4e7a-9916-b6f28785b5c0}</Project>
       <Name>NullParameterCheckRefactoring.VB</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="RoslynExts.CS">
+      <HintPath>..\..\packages\RoslynExts.1.0.4\lib\portable-net45+win8\RoslynExts.CS.dll</HintPath>
+    </Reference>
+    <Reference Include="RoslynExts.VB">
+      <HintPath>..\..\packages\RoslynExts.1.0.4\lib\portable-net45+win8\RoslynExts.VB.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />

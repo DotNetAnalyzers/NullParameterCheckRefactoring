@@ -1,5 +1,6 @@
 Imports Microsoft.CodeAnalysis.VisualBasic.SyntaxFactory
 'Imports Microsoft.CodeAnalysis.VisualBasic.SyntaxKind
+Imports DotNetAnalyzers.RoslynExts.VB
 
 <ExportCodeRefactoringProvider(NullCheck_CodeRefactoringCodeRefactoringProvider.RefactoringId, LanguageNames.VisualBasic), [Shared]>
 Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
@@ -12,28 +13,28 @@ Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
     ' Find the node at the selection.
     Dim node = root.FindNode(context.Span)
     ' Only offer a refactoring if the selected node is a type statement node.
-    Dim _Identifier_ = TryCast( node, ModifiedIdentifierSyntax )
-    If _Identifier_ Is Nothing Then Return 
+    Dim _Identifier_ = TryCast(node, ModifiedIdentifierSyntax)
+    If _Identifier_ Is Nothing Then Return
     Dim _parmeter_ = TryCast(_Identifier_.Parent, ParameterSyntax)
     If _parmeter_ Is Nothing Then Return
     Dim _method_ = TryCast(_parmeter_.Parent.Parent.Parent, MethodBlockSyntax)
     If _method_ Is Nothing Then Exit Function
-    Dim guards0 = _method_.Begin.ParameterList.Parameters.Select(Function(p ) New With {.ID =p.Identifier,.s= GetSingleIFstatement(p)})
-    Dim guards1  = _method_.Begin.ParameterList.Parameters.Select(Function(p ) New With {.ID =p.Identifier,.s= GetMultiLineIFstatement(p)})
+    Dim guards0 = _method_.Begin.ParameterList.Parameters.Select(Function(p) New With {.ID = p.Identifier, .s = GetSingleIFstatement(p)})
+    Dim guards1 = _method_.Begin.ParameterList.Parameters.Select(Function(p) New With {.ID = p.Identifier, .s = GetMultiLineIFstatement(p)})
     Dim _Model_ = Await context.Document.GetSemanticModelAsync(context.CancellationToken)
     Dim ifStatements = _method_.Statements.Where(Function(s) (TypeOf s Is MultiLineIfBlockSyntax) OrElse (TypeOf s Is SingleLineIfStatementSyntax))
     Dim pinfo = _Model_.GetTypeInfo(_parmeter_.AsClause.Type, context.CancellationToken)
-    If pinfo.ConvertedType.IsReferenceType = False Then Return 
+    If pinfo.ConvertedType.IsReferenceType = False Then Return
     Dim GuardStatements = ifStatements.Where(NullChecks(_parmeter_))
 
-    Dim IsNullCheckAlreadyPresent = GuardStatements.Any 
-    If Not IsNullCheckAlreadyPresent  Then context.RegisterRefactoring(CodeAction.Create("Check Parameter for null", Function(ct As CancellationToken) AddParameterNullCheckAsync(context.Document, _parmeter_, _method_, ct)))
+    Dim IsNullCheckAlreadyPresent = GuardStatements.Any
+    If Not IsNullCheckAlreadyPresent Then context.RegisterRefactoring(CodeAction.Create("Check Parameter for null", Function(ct As CancellationToken) AddParameterNullCheckAsync(context.Document, _parmeter_, _method_, ct)))
   End Function
 
   Private Shared Function NullChecks(_parmeter_ As ParameterSyntax) As Func(Of StatementSyntax, Boolean)
     Return Function(s)
              If TypeOf s Is SingleLineIfStatementSyntax Then
-               Dim singleIF =DirectCast(s, SingleLineIfStatementSyntax)
+               Dim singleIF = DirectCast(s, SingleLineIfStatementSyntax)
                Dim isExpr = TryCast(singleIF.Condition, BinaryExpressionSyntax)
                If (isExpr Is Nothing) OrElse (Not isExpr.IsKind(SyntaxKind.IsExpression)) Then Return False
                Dim res = CheckIfCondition(_parmeter_, isExpr)
@@ -47,7 +48,7 @@ Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
                Dim res = CheckIfCondition(_parmeter_, isExpr)
                If Not res Then Return res
                Dim _mif_ = GetMultiLineIFstatement(_parmeter_)
-               Return not multiIF.WithoutAnnotations().IsEquivalentTo(_mif_)
+               Return Not multiIF.WithoutAnnotations().IsEquivalentTo(_mif_)
              End If
              Return False
            End Function
@@ -61,11 +62,11 @@ Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
     Return String.Compare(l.Identifier.Text, paramSyntax.Identifier.Identifier.Text, StringComparison.Ordinal) = 0
   End Function
 
-  Private Shared Function CheckIfCondition( isExpr As BinaryExpressionSyntax) As Boolean
+  Private Shared Function CheckIfCondition(isExpr As BinaryExpressionSyntax) As Boolean
     Dim l = TryCast(isExpr.Left, IdentifierNameSyntax)
     Dim r = TryCast(isExpr.Right, LiteralExpressionSyntax)
     If l Is Nothing OrElse r Is Nothing Then Return False
-    Return  r.IsKind(SyntaxKind.NothingLiteralExpression)
+    Return r.IsKind(SyntaxKind.NothingLiteralExpression)
   End Function
 
   Private Async Function AddParameterNullCheckAsync(document As Document,
@@ -108,7 +109,7 @@ Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
 
     Dim parameters = method.Begin.ParameterList.Parameters
     Dim pCount = parameters.Count
-     Dim _Model_ = Await document.GetSemanticModelAsync(cancellationToken)
+    Dim _Model_ = Await document.GetSemanticModelAsync(cancellationToken)
 
     Dim Guards As New List(Of StatementSyntax)(Enumerable.Repeat(Of StatementSyntax)(Nothing, pCount))
     Dim parameterNames = parameters.Select(Function(p) p.Identifier).ToList
@@ -126,7 +127,7 @@ Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
     If NewGuardIndex.HasValue Then Guards(NewGuardIndex.Value) = NewGuard.WithTrailingTrivia(SyntaxTrivia(SyntaxKind.EndOfLineTrivia, ""))
     Dim newmethod = method.RemoveNodes(ExistingGuards, SyntaxRemoveOptions.KeepExteriorTrivia Or SyntaxRemoveOptions.KeepEndOfLine)
 
-    Dim NonNullGuards = WhereNonNull(Guards).ToList
+    Dim NonNullGuards = Guards.WhereNonNull.ToList
     Dim newStatements = newmethod.Statements.InsertRange(0, NonNullGuards)
     newmethod = newmethod.WithStatements(newStatements)
     Dim newBlock = newmethod.WithAdditionalAnnotations(Formatting.Formatter.Annotation)
@@ -147,44 +148,27 @@ Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
     Return New Integer?()
   End Function
 
-  Private Function WhereNonNull(Of T As Class)(xs As IEnumerable(Of T)) As IEnumerable(Of T)
-    Return xs.Where(Function(x) x IsNot Nothing)
-  End Function
+
 
   Private Shared Function GetSingleIFstatement(parameterStmt As ParameterSyntax) As SingleLineIfStatementSyntax
-    Dim if_ = SingleLineIfStatement(
-                GetIsNothingExpr(parameterStmt),
-               New SyntaxList(Of StatementSyntax)().Add(GetThrowStatementForParameter(parameterStmt).WithTrailingTrivia(EndOfLine("", True))),
-                Nothing).NormalizeWhitespace '.WithAdditionalAnnotations(Formatting.Formatter.Annotation)
-    Return if_
+    Return String.Format("If {0} Then {1}", GetIsNothingExpr(parameterStmt), GetThrowStatementForParameter(parameterStmt)).ToSExpr(Of SingleLineIfStatementSyntax)
   End Function
 
-  Private Shared Function GetThrowStatementForParameter(parameterStmt As ParameterSyntax) As ThrowStatementSyntax 
-    Dim _paramname_ = GetParameterName(parameterStmt)
-    Dim st = ObjectCreationExpression(
-               ParseTypeName(GetType(ArgumentNullException).FullName)
-             ).WithArgumentList(ArgumentList().AddArguments(SimpleArgument(_paramname_)))
-    Return ThrowStatement(st)
+  Private Shared Function GetThrowStatementForParameter(parameterStmt As ParameterSyntax) As ThrowStatementSyntax
+    Return String.Format(" Throw New System.ArgumentNullException({0})", GetParameterName(parameterStmt)).ToSExpr(Of ThrowStatementSyntax)
   End Function
 
-  Private Shared Function GetIsNothingExpr (forParameter As ParameterSyntax) As BinaryExpressionSyntax
-   Return IsExpression( IdentifierName(forParameter.Identifier.Identifier.Text), GetNothingKeyword)
-  End Function
-
-  Private Shared Function GetNothingKeyword() As LiteralExpressionSyntax
-    Return NothingLiteralExpression(Token(SyntaxKind.NothingKeyword))
+  Private Shared Function GetIsNothingExpr(forParameter As ParameterSyntax) As BinaryExpressionSyntax
+    Return String.Format(" {0} Is Nothing ", forParameter.Identifier.Identifier.Text).ToExpr(Of BinaryExpressionSyntax)
   End Function
 
   Private Shared Function GetMultiLineIFstatement(parameterStmt As ParameterSyntax) As MultiLineIfBlockSyntax
-    Dim if_ = MultiLineIfBlock( IfStatement(
-                                  Token(SyntaxKind.IfKeyword),
-                                  GetIsNothingExpr(parameterStmt),
-                                  Token(SyntaxKind.ThenKeyword)
-                                ),
-                                New SyntaxList(Of StatementSyntax)().Add( GetThrowStatementForParameter(parameterStmt )),
-                                Nothing,
-                                Nothing).WithAdditionalAnnotations(Formatting.Formatter.Annotation)
-    Return if_
+    Return String.Format("If {0} Then
+  {1}
+End If",
+    GetIsNothingExpr(parameterStmt),
+    GetThrowStatementForParameter(parameterStmt)).ToSExpr(Of MultiLineIfBlockSyntax)
+
   End Function
 
   Private Shared Function GetParameterName(parameterStmt As ParameterSyntax) As LiteralExpressionSyntax
@@ -193,3 +177,11 @@ Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
   End Function
 
 End Class
+
+Public Module Exts
+
+  <Runtime.CompilerServices.Extension>
+  Public Function WhereNonNull(Of T As Class)(xs As IEnumerable(Of T)) As IEnumerable(Of T)
+    Return xs.Where(Function(x) x IsNot Nothing)
+  End Function
+End Module

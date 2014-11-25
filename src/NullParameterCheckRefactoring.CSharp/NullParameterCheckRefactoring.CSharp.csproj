@@ -53,6 +53,12 @@
       <HintPath>..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.0.0-beta1-20141031-01\lib\portable-net45+win8\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="RoslynExts.CS">
+      <HintPath>..\..\packages\RoslynExts.1.0.4\lib\portable-net45+win8\RoslynExts.CS.dll</HintPath>
+    </Reference>
+    <Reference Include="RoslynExts.VB">
+      <HintPath>..\..\packages\RoslynExts.1.0.4\lib\portable-net45+win8\RoslynExts.VB.dll</HintPath>
+    </Reference>
     <Reference Include="System.Collections.Immutable">
       <HintPath>..\..\packages\System.Collections.Immutable.1.1.32-beta\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
       <Private>False</Private>

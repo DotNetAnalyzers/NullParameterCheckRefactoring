@@ -11,6 +11,8 @@ using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using DotNetAnalyzers.RoslynExts.CS;
+
 
 namespace NullParameterCheckRefactoring
 {
@@ -68,9 +70,9 @@ namespace NullParameterCheckRefactoring
 
     private async Task<Document> AddParameterNullCheckAsync(Document document, ParameterSyntax parameter, BaseMethodDeclarationSyntax methodDeclaration, CancellationToken cancellationToken)
     {
-
-      var nullCheckIfStatement = SyntaxFactory.ExpressionStatement(
-                 SyntaxFactory.ParseExpression("if( \{parameter.Identifier} == null ) { throw new ArgumentNullException( nameof( \{parameter.Identifier.Text} )); }"));
+      
+      var nullCheckIfStatement =
+        "if( \{parameter.Identifier} == null ) { throw new ArgumentNullException( nameof( \{parameter.Identifier.Text} )); };".ToSExpr<IfStatementSyntax>();
       SyntaxList<SyntaxNode> newStatements = methodDeclaration.Body.Statements.Insert(0, nullCheckIfStatement);
       BlockSyntax newBlock = SyntaxFactory.Block(newStatements).WithAdditionalAnnotations(Formatter.Annotation);
       SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken);
