@@ -74,8 +74,8 @@ Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
                                                     cancellationToken As CancellationToken) As Task(Of Document)
 
     Dim NewGuard As SingleLineIfStatementSyntax = GetSingleIFstatement(_parmeter_)
-    Dim ifStatements = method.Statements.Where(Function(s) (TypeOf s Is MultiLineIfBlockSyntax) OrElse (TypeOf s Is SingleLineIfStatementSyntax))
 
+    Dim ifStatements = method.Statements.Where(Function(s) (TypeOf s Is MultiLineIfBlockSyntax) OrElse (TypeOf s Is SingleLineIfStatementSyntax))
     Dim ExistingGuards = ifStatements.Where(Function(s)
                                               If TypeOf s Is SingleLineIfStatementSyntax Then
                                                 Dim singleIF = DirectCast(s, SingleLineIfStatementSyntax)
@@ -89,6 +89,8 @@ Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
                                                 Return False
                                               End If
                                             End Function).ToList()
+
+
     Dim ExistingGuardParameters = ExistingGuards.Select(Function(s)
                                                           If TypeOf s Is SingleLineIfStatementSyntax Then
                                                             Dim singleIF = DirectCast(s, SingleLineIfStatementSyntax)
@@ -127,7 +129,7 @@ Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
     Dim NonNullGuards = WhereNonNull(Guards).ToList
     Dim newStatements = newmethod.Statements.InsertRange(0, NonNullGuards)
     newmethod = newmethod.WithStatements(newStatements)
-    Dim newBlock = newmethod '.NormalizeWhitespace.WithAdditionalAnnotations(Formatting.Formatter.Annotation)
+    Dim newBlock = newmethod.WithAdditionalAnnotations(Formatting.Formatter.Annotation)
     Return document.WithSyntaxRoot((Await document.GetSyntaxRootAsync(cancellationToken)).ReplaceNode(method, newBlock))
   End Function
 
