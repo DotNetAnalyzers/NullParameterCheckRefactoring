@@ -119,13 +119,14 @@ Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
       If pinfo.ConvertedType.IsReferenceType = False Then Continue For
       Dim Id = ExistingGuardParameters(i)
       Dim index = FindGuardIndex(parameterNames, Id)
-      If index.HasValue Then Guards(index.Value) = eg.WithSameTriviaAs(eg)''.WithTrailingTrivia(SyntaxTrivia(SyntaxKind.EndOfLineTrivia, ""))
+      If index.HasValue Then Guards(index.Value) = eg.WithSameTriviaAs(eg)
     Next
 
     Dim NewGuardIndex = FindGuardIndex(parameterNames, _parmeter_.Identifier)
-    If NewGuardIndex.HasValue Then Guards(NewGuardIndex.Value) = NewGuard.WithLeadingTrivia(SyntaxTrivia(SyntaxKind.EndOfLineTrivia,"")).
-                                                                          WithTrailingTrivia(SyntaxTrivia(SyntaxKind.EndOfLineTrivia, ""))
-    Dim newmethod = method.RemoveNodes(ExistingGuards, SyntaxRemoveOptions.KeepExteriorTrivia  And  SyntaxRemoveOptions.KeepEndOfLine)
+    If NewGuardIndex.HasValue Then Guards(NewGuardIndex.Value) = NewGuard.AddEOL
+
+
+    Dim newmethod = method.RemoveNodes(ExistingGuards, SyntaxRemoveOptions.KeepNoTrivia  )
 
     Dim NonNullGuards = Guards.WhereNonNull.ToList
     Dim newStatements = newmethod.Statements.InsertRange(0, NonNullGuards)
@@ -183,5 +184,10 @@ Public Module Exts
   <Runtime.CompilerServices.Extension>
   Public Function WhereNonNull(Of T As Class)(xs As IEnumerable(Of T)) As IEnumerable(Of T)
     Return xs.Where(Function(x) x IsNot Nothing)
+  End Function
+
+  <Runtime.CompilerServices.Extension>
+  public Function AddEOL(Of T0 As SyntaxNode)(node As T0) As T0
+    Return node.WithTrailingTrivia(SyntaxFactory.SyntaxTrivia(SyntaxKind.EndOfLineTrivia,Environment.NewLine ))
   End Function
 End Module
