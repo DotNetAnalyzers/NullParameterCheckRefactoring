@@ -63,11 +63,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="RoslynExts.CS">
-      <HintPath>..\..\packages\RoslynExts.1.0.4\lib\portable-net45+win8\RoslynExts.CS.dll</HintPath>
+    <Reference Include="RoslynExts.CS, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\RoslynExts.1.0.5\lib\portable-net45+win8\RoslynExts.CS.dll</HintPath>
     </Reference>
-    <Reference Include="RoslynExts.VB">
-      <HintPath>..\..\packages\RoslynExts.1.0.4\lib\portable-net45+win8\RoslynExts.VB.dll</HintPath>
+    <Reference Include="RoslynExts.VB, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\RoslynExts.1.0.5\lib\portable-net45+win8\RoslynExts.VB.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
