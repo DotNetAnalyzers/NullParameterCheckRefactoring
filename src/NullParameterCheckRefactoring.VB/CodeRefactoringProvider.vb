@@ -1,6 +1,6 @@
 Imports Microsoft.CodeAnalysis.VisualBasic.SyntaxFactory
 'Imports Microsoft.CodeAnalysis.VisualBasic.SyntaxKind
-Imports DotNetAnalyzers.RoslynExts.VB
+Imports RoslynExts.VB
 
 
 <ExportCodeRefactoringProvider(NullCheck_CodeRefactoringCodeRefactoringProvider.RefactoringId, LanguageNames.VisualBasic), [Shared]>
@@ -75,6 +75,7 @@ Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
     Dim NewGuardStatement = GetGuardStatement(_parmeter_)
 
     Dim ifStatements = method.Statements.Where(Function(s) (TypeOf s Is MultiLineIfBlockSyntax) OrElse (TypeOf s Is SingleLineIfStatementSyntax))
+    '  Dim ifStatements = method.Statements.OfType(Of MultiLineIfBlockSyntax, SingleLineIfStatementSyntax)
 
     Dim ExistingGuards = ifStatements.Where(
       Function(s)
@@ -169,27 +170,18 @@ End Class
 Public Module Exts
 
   <Runtime.CompilerServices.Extension>
-  Public Function [Try](Of T1 As Class)(expr As Object) As T1
-    Return TryCast(expr, T1)
-  End Function
-  <Runtime.CompilerServices.Extension>
-  Public Function [As](Of T1 As Class)(expr As Object) As T1
-    Return DirectCast(expr, T1)
-  End Function
-
-  <Runtime.CompilerServices.Extension>
   Public Function WhereNonNull(Of T As Class)(xs As IEnumerable(Of T)) As IEnumerable(Of T)
     Return xs.Where(Function(x) x IsNot Nothing)
   End Function
 
   <Runtime.CompilerServices.Extension>
-  Public Function OfType(Of xT, T1, T2)(xs As IEnumerable(Of xT)) As IEnumerable(Of xT)
+  Public Function OfType(Of xT, T1 As xT, T2 As xT)(xs As IEnumerable(Of xT)) As IEnumerable(Of xT)
     Return xs.Where(Function(x) (TypeOf xs Is T1) OrElse (TypeOf xs Is T2))
   End Function
 
 
-  <Runtime.CompilerServices.Extension>
-  Public Function AddEOL(Of T0 As SyntaxNode)(node As T0) As T0
-    Return node.WithTrailingTrivia(SyntaxFactory.SyntaxTrivia(SyntaxKind.EndOfLineTrivia, Environment.NewLine))
-  End Function
+  '<Runtime.CompilerServices.Extension>
+  'Public Function AddEOL(Of T0 As SyntaxNode)(node As T0) As T0
+  '  Return node.WithTrailingTrivia(SyntaxFactory.SyntaxTrivia(SyntaxKind.EndOfLineTrivia, Environment.NewLine))
+  'End Function
 End Module
