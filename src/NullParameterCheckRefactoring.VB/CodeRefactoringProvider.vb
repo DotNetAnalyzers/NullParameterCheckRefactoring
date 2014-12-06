@@ -2,6 +2,7 @@ Imports Microsoft.CodeAnalysis.VisualBasic.SyntaxFactory
 'Imports Microsoft.CodeAnalysis.VisualBasic.SyntaxKind
 Imports DotNetAnalyzers.RoslynExts.VB
 
+
 <ExportCodeRefactoringProvider(NullCheck_CodeRefactoringCodeRefactoringProvider.RefactoringId, LanguageNames.VisualBasic), [Shared]>
 Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
   Inherits CodeRefactoringProvider
@@ -19,8 +20,7 @@ Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
     If _parmeter_ Is Nothing Then Return
     Dim _method_ = TryCast(_parmeter_.Parent.Parent.Parent, MethodBlockSyntax)
     If _method_ Is Nothing Then Exit Function
-    Dim guards0 = _method_.Begin.ParameterList.Parameters.Select(Function(p) New With {.ID = p.Identifier, .s = GetSingleIFstatement(p)})
-    Dim guards1 = _method_.Begin.ParameterList.Parameters.Select(Function(p) New With {.ID = p.Identifier, .s = GetMultiLineIFstatement(p)})
+
     Dim _Model_ = Await context.Document.GetSemanticModelAsync(context.CancellationToken)
     Dim ifStatements = _method_.Statements.Where(Function(s) (TypeOf s Is MultiLineIfBlockSyntax) OrElse (TypeOf s Is SingleLineIfStatementSyntax))
     Dim pinfo = _Model_.GetTypeInfo(_parmeter_.AsClause.Type, context.CancellationToken)
@@ -91,7 +91,6 @@ Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
                                               End If
                                             End Function).ToList()
 
-
     Dim ExistingGuardParameters = ExistingGuards.Select(Function(s)
                                                           If TypeOf s Is SingleLineIfStatementSyntax Then
                                                             Dim singleIF = DirectCast(s, SingleLineIfStatementSyntax)
@@ -120,12 +119,13 @@ Friend Class NullCheck_CodeRefactoringCodeRefactoringProvider
       If pinfo.ConvertedType.IsReferenceType = False Then Continue For
       Dim Id = ExistingGuardParameters(i)
       Dim index = FindGuardIndex(parameterNames, Id)
-      If index.HasValue Then Guards(index.Value) = eg.WithTrailingTrivia(SyntaxTrivia(SyntaxKind.EndOfLineTrivia, ""))
+      If index.HasValue Then Guards(index.Value) = eg.WithSameTriviaAs(eg)''.WithTrailingTrivia(SyntaxTrivia(SyntaxKind.EndOfLineTrivia, ""))
     Next
 
     Dim NewGuardIndex = FindGuardIndex(parameterNames, _parmeter_.Identifier)
-    If NewGuardIndex.HasValue Then Guards(NewGuardIndex.Value) = NewGuard.WithTrailingTrivia(SyntaxTrivia(SyntaxKind.EndOfLineTrivia, ""))
-    Dim newmethod = method.RemoveNodes(ExistingGuards, SyntaxRemoveOptions.KeepExteriorTrivia Or SyntaxRemoveOptions.KeepEndOfLine)
+    If NewGuardIndex.HasValue Then Guards(NewGuardIndex.Value) = NewGuard.WithLeadingTrivia(SyntaxTrivia(SyntaxKind.EndOfLineTrivia,"")).
+                                                                          WithTrailingTrivia(SyntaxTrivia(SyntaxKind.EndOfLineTrivia, ""))
+    Dim newmethod = method.RemoveNodes(ExistingGuards, SyntaxRemoveOptions.KeepExteriorTrivia  And  SyntaxRemoveOptions.KeepEndOfLine)
 
     Dim NonNullGuards = Guards.WhereNonNull.ToList
     Dim newStatements = newmethod.Statements.InsertRange(0, NonNullGuards)
