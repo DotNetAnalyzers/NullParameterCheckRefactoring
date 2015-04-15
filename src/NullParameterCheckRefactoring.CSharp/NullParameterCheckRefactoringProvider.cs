@@ -108,9 +108,10 @@ namespace NullParameterCheckRefactoring
             ExpressionSyntax parameterNameExpression;
             if((document.Project.ParseOptions as CSharpParseOptions)?.LanguageVersion >= LanguageVersion.CSharp6)
             {
-                parameterNameExpression = SyntaxFactory.NameOfExpression(
-                    "nameof",
-                    SyntaxFactory.ParseExpression(parameter.Identifier.Text));
+                // TODO: Turn this into nameof stuff. It seems I cannot find how to get it on RC...
+                parameterNameExpression = SyntaxFactory.LiteralExpression(
+                    SyntaxKind.StringLiteralExpression,
+                    SyntaxFactory.Literal(parameter.Identifier.ValueText));
             }
             else
             {
