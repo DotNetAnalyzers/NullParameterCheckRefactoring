@@ -52,37 +52,11 @@ namespace NullParameterCheckRefactoring
                             .Where(x => x.IsKind(SyntaxKind.EqualsExpression))
                             .Any(expression =>
                             {
-                                bool result;
                                 bool isNullCheck = expression.Right.IsKind(SyntaxKind.NullLiteralExpression);
-                                if (isNullCheck)
-                                {
-                                    IdentifierNameSyntax identifierSyntaxt = expression.ChildNodes().OfType<IdentifierNameSyntax>().FirstOrDefault();
-                                    if (identifierSyntaxt != null)
-                                    {
-                                        string identifierText = identifierSyntaxt.Identifier.Text;
-                                        string paramText = parameterSyntax.Identifier.Text;
-
-                                        if (identifierText.Equals(paramText, StringComparison.Ordinal))
-                                        {
-                                            // There is already a null check for this parameter. Skip it.
-                                            result = true;
-                                        }
-                                        else
-                                        {
-                                            result = false;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        result = false;
-                                    }
-                                }
-                                else
-                                {
-                                    result = false;
-                                }
-
-                                return result;
+                                if (!isNullCheck) return false;
+                                IdentifierNameSyntax identifierSyntaxt = expression.ChildNodes().OfType<IdentifierNameSyntax>().FirstOrDefault();
+                                return (identifierSyntaxt != null && 
+                                    identifierSyntaxt.Identifier.Text.Equals(parameterSyntax.Identifier.Text, StringComparison.Ordinal))
                             });
                     });
 
